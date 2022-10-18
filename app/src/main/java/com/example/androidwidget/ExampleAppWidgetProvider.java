@@ -9,6 +9,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -26,10 +27,20 @@ public class ExampleAppWidgetProvider extends AppWidgetProvider {
             SharedPreferences prefs = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
             String btnTxt = prefs.getString(KEY_BUTTON + appwidgetId, "widget pro");
 
+// grtadient widget
+            Intent serviceIntent = new Intent(context, ExampleWidgetServicesGRadient.class);
+            serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appwidgetId);
+            serviceIntent.setData(Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME)));
+
+
 
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.example_widget);
             views.setOnClickPendingIntent(R.id.item_widget_btn_1, pendingIntent);
             views.setCharSequence(R.id.item_widget_btn_1, "setText", btnTxt);;
+//            this is for gradient
+            views.setRemoteAdapter(R.id.item_widget_stack, serviceIntent);
+            views.setEmptyView(R.id.item_widget_stack, R.id.item_widget_tv_stack_empty);
+
 
 //            resize
             Bundle appWidgetBundle = appWidgetManager.getAppWidgetOptions(appwidgetId);
@@ -70,8 +81,10 @@ public class ExampleAppWidgetProvider extends AppWidgetProvider {
 
         if (maxWidth > 100){
             view.setViewVisibility(R.id.item_widget_tv_1, View.VISIBLE);
+            view.setViewVisibility(R.id.item_widget_btn_1, View.VISIBLE);
         } else {
             view.setViewVisibility(R.id.item_widget_tv_1, View.GONE);
+            view.setViewVisibility(R.id.item_widget_btn_1, View.GONE);
         }
     }
 
